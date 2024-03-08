@@ -31,12 +31,11 @@ public class HighLevelDemo {
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-
         System.out.println("enter decimal numbers:");
 
         int[] numbers = new int[10000];
         int index = 0;
-
+    // read numbers from console
         while (scanner.hasNext() && index < 10000) {
             if (scanner.hasNextInt()) {
                 numbers[index] = scanner.nextInt();
