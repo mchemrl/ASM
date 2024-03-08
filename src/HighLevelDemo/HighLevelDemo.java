@@ -35,7 +35,7 @@ public class HighLevelDemo {
 
         int[] numbers = new int[10000];
         int index = 0;
-    // read numbers from console
+       //read numbers from console
         while (scanner.hasNext() && index < 10000) {
             if (scanner.hasNextInt()) {
                 numbers[index] = scanner.nextInt();
