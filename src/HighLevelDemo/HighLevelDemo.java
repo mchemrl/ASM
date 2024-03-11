@@ -45,7 +45,11 @@ public class HighLevelDemo {
                 numbers[index] = scanner.nextInt();
                 index++;
             } else {
-                scanner.next();
+                if (scanner.hasNext()) {
+                    scanner.next();
+                } else {
+                    break;
+                }
             }
 
             //line breask (ctrl z or ctrl d)
@@ -53,7 +57,7 @@ public class HighLevelDemo {
                 scanner.next("[\\r\\n]+");
             }
         }
-//FIX later when you press enter it throws exception
+
 
         String[] binaryNumbers = convertDecimalToBinary(numbers);
         binaryNumbers = bubbleSortAsc(binaryNumbers);
