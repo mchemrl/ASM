@@ -24,42 +24,43 @@ OUTPUT:
 4
 
  */
-
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class HighLevelDemo {
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter decimal numbers:");
+        System.out.println("enter decimal numbers:");
 
-        int[] numbers = new int[10000];
+        int[] numbers = new int[0];
         int index = 0;
 
         while (scanner.hasNext()) {
-            if (scanner.hasNextInt() && index < 10000) {
+            if (scanner.hasNextInt()) {
+                if (index == numbers.length) {
+                    numbers = resizeArray(numbers, numbers.length + 1);
+                }
                 numbers[index] = scanner.nextInt();
                 index++;
             } else {
                 scanner.next();
             }
 
+            //line breask (ctrl z or ctrl d)
             while (scanner.hasNext("[\\r\\n]+")) {
                 scanner.next("[\\r\\n]+");
             }
         }
 
-        System.out.println("original decimal numbers:");
-        for (int i = 0; i < index; i++) {
-            System.out.println(numbers[i]);
-        }
-
         String[] binaryNumbers = convertDecimalToBinary(numbers);
 
-        System.out.println("binary representations:");
-        for (int i = 0; i < index; i++) {
-            System.out.println(binaryNumbers[i]);
+        //test bubble sort
+        binaryNumbers = bubbleSortAsc(binaryNumbers);
+        for (String binaryNumber : binaryNumbers) {
+            System.out.println(binaryNumber);
         }
+
     }
 
 
@@ -130,5 +131,24 @@ public class HighLevelDemo {
         }
 
         return binaryNumbers;
+    }
+
+    public static String[] bubbleSortAsc(String[] binaryNumbers) {
+        for (int i = 0; i < binaryNumbers.length; i++) {
+            for (int j = 0; j < binaryNumbers.length - 1; j++) {
+                if (binaryNumbers[j].compareTo(binaryNumbers[j + 1]) > 0) {
+                    String temp = binaryNumbers[j];
+                    binaryNumbers[j] = binaryNumbers[j + 1];
+                    binaryNumbers[j + 1] = temp;
+                }
+            }
+        }
+        return binaryNumbers;
+    }
+
+    public static int[] resizeArray(int[] oldArray, int newSize) {
+        int[] newArray = new int[newSize];
+        System.arraycopy(oldArray, 0, newArray, 0, oldArray.length);
+        return newArray;
     }
 }
