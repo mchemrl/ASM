@@ -143,7 +143,9 @@ public class HighLevelDemo {
     public static String[] bubbleSortAsc(String[] binaryNumbers) {
         for (int i = 0; i < binaryNumbers.length; i++) {
             for (int j = 0; j < binaryNumbers.length - 1; j++) {
-                if (binaryNumbers[j].compareTo(binaryNumbers[j + 1]) > 0) {
+                int num1 = convertBinaryToDecimal(binaryNumbers[j]);
+                int num2 = convertBinaryToDecimal(binaryNumbers[j + 1]);
+                if (num1> num2){
                     String temp = binaryNumbers[j];
                     binaryNumbers[j] = binaryNumbers[j + 1];
                     binaryNumbers[j + 1] = temp;
