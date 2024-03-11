@@ -24,6 +24,7 @@ OUTPUT:
 4
 
  */
+
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -54,25 +55,23 @@ public class HighLevelDemo {
         }
 
         String[] binaryNumbers = convertDecimalToBinary(numbers);
-
-        //test bubble sort
         binaryNumbers = bubbleSortAsc(binaryNumbers);
-        for (String binaryNumber : binaryNumbers) {
-            System.out.println(binaryNumber);
-        }
 
+        int median = calculateMedian(binaryNumbers);
+
+        System.out.println("median: " + median);
     }
 
 
     public static String[] convertDecimalToBinary(int[] numbers) {
         String[] binaryNumbers = new String[numbers.length];
 
-        for(int i = 0; i < numbers.length; i++) {
-            if(numbers[i] == 0) {
+        for (int i = 0; i < numbers.length; i++) {
+            if (numbers[i] == 0) {
                 binaryNumbers[i] = "0";
                 continue;
             }
-            if(numbers[i] >= 32786 || numbers[i] <= -32786) {
+            if (numbers[i] >= 32786 || numbers[i] <= -32786) {
                 binaryNumbers[i] = "1000000000000000";
                 continue;
             }
@@ -99,7 +98,7 @@ public class HighLevelDemo {
             }
             formattedNumber += binary;
 
-            if(!isNeg) {
+            if (!isNeg) {
                 binaryNumbers[i] = formattedNumber;
                 continue;
             }
@@ -144,6 +143,20 @@ public class HighLevelDemo {
             }
         }
         return binaryNumbers;
+    }
+
+    public static int calculateMedian(String[] sortedNumbers) {
+        if (sortedNumbers.length == 0) {
+            return 0;
+        }
+        int middle = sortedNumbers.length / 2;
+        if (sortedNumbers.length % 2 == 0) {
+            int median1 = Integer.parseInt(sortedNumbers[middle - 1], 2);
+            int median2 = Integer.parseInt(sortedNumbers[middle], 2);
+            return (median1 + median2) / 2;
+        } else {
+            return Integer.parseInt(sortedNumbers[middle], 2);
+        }
     }
 
     public static int[] resizeArray(int[] oldArray, int newSize) {
