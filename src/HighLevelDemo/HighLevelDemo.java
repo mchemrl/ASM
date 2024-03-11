@@ -63,14 +63,15 @@ public class HighLevelDemo {
             System.out.println(binaryNumber);
         }
 
-        int median = calculateMedian(binaryNumbers);
-        int average = calculateAverage(binaryNumbers);
+        double median = calculateMedian(binaryNumbers);
+        double average = calculateAverage(binaryNumbers);
 
         System.out.println("median: " + median);
         System.out.println("average: " + average);
     }
 
 
+    //convert decimal to binary and format it to 16bit length number
     public static String[] convertDecimalToBinary(int[] numbers) {
         String[] binaryNumbers = new String[numbers.length];
 
@@ -140,6 +141,7 @@ public class HighLevelDemo {
         return binaryNumbers;
     }
 
+    //bubble sort ascending order
     public static String[] bubbleSortAsc(String[] binaryNumbers) {
         for (int i = 0; i < binaryNumbers.length; i++) {
             for (int j = 0; j < binaryNumbers.length - 1; j++) {
@@ -155,7 +157,8 @@ public class HighLevelDemo {
         return binaryNumbers;
     }
 
-    public static int calculateMedian(String[] sortedNumbers) {
+    //calculate median
+    public static double calculateMedian(String[] sortedNumbers) {
         if (sortedNumbers.length == 0) {
             return 0;
         }
@@ -163,20 +166,22 @@ public class HighLevelDemo {
         if (sortedNumbers.length % 2 == 0) {
             int median1 = convertBinaryToDecimal(sortedNumbers[middle - 1]);
             int median2 = convertBinaryToDecimal(sortedNumbers[middle]);
-            return (median1 + median2) / 2;
+            return (median1 + median2) / 2.0;
         } else {
             return convertBinaryToDecimal(sortedNumbers[middle]);
         }
     }
 
-    public static int calculateAverage(String[] sortedNumbers) {
-        int sum = 0;
+    //calculate average
+    public static double calculateAverage(String[] sortedNumbers) {
+        double sum = 0;
         for (String number : sortedNumbers) {
             sum += convertBinaryToDecimal(number);
         }
         return sum / sortedNumbers.length;
     }
 
+    //convert binary to decimal
     public static int convertBinaryToDecimal(String binary) {
         if (binary == null || binary.isEmpty()) {
             return 0;
