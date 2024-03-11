@@ -53,13 +53,21 @@ public class HighLevelDemo {
                 scanner.next("[\\r\\n]+");
             }
         }
+//FIX later when you press enter it throws exception
 
         String[] binaryNumbers = convertDecimalToBinary(numbers);
         binaryNumbers = bubbleSortAsc(binaryNumbers);
 
+        System.out.println("sorted binary numbers:");
+        for (String binaryNumber : binaryNumbers) {
+            System.out.println(binaryNumber);
+        }
+
         int median = calculateMedian(binaryNumbers);
+        int average = calculateAverage(binaryNumbers);
 
         System.out.println("median: " + median);
+        System.out.println("average: " + average);
     }
 
 
@@ -151,14 +159,44 @@ public class HighLevelDemo {
         }
         int middle = sortedNumbers.length / 2;
         if (sortedNumbers.length % 2 == 0) {
-            int median1 = Integer.parseInt(sortedNumbers[middle - 1], 2);
-            int median2 = Integer.parseInt(sortedNumbers[middle], 2);
+            int median1 = convertBinaryToDecimal(sortedNumbers[middle - 1]);
+            int median2 = convertBinaryToDecimal(sortedNumbers[middle]);
             return (median1 + median2) / 2;
         } else {
-            return Integer.parseInt(sortedNumbers[middle], 2);
+            return convertBinaryToDecimal(sortedNumbers[middle]);
         }
     }
 
+    public static int calculateAverage(String[] sortedNumbers) {
+        int sum = 0;
+        for (String number : sortedNumbers) {
+            sum += convertBinaryToDecimal(number);
+        }
+        return sum / sortedNumbers.length;
+    }
+
+    public static int convertBinaryToDecimal(String binary) {
+        if (binary == null || binary.isEmpty()) {
+            return 0;
+        }
+
+        boolean isNegative = binary.charAt(0) == '1';
+
+        if (!isNegative) {
+            return Integer.parseInt(binary, 2);
+        } else {
+            // two's complement using temp slot (2) and then replace it with 0 and 1 iykyk
+            String invertedBinary = binary
+                    .substring(1)
+                    .replace('0', '2')
+                    .replace('1', '0')
+                    .replace('2', '1');
+
+            int decimalValue = Integer.parseInt(invertedBinary, 2) + 1;
+
+            return -decimalValue;
+        }
+    }
     public static int[] resizeArray(int[] oldArray, int newSize) {
         int[] newArray = new int[newSize];
         System.arraycopy(oldArray, 0, newArray, 0, oldArray.length);
