@@ -31,20 +31,104 @@ public class HighLevelDemo {
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("enter decimal numbers:");
+        System.out.println("Enter decimal numbers:");
 
         int[] numbers = new int[10000];
         int index = 0;
-       //read numbers from console
-        while (scanner.hasNext() && index < 10000) {
-            if (scanner.hasNextInt()) {
+
+        while (scanner.hasNext()) {
+            if (scanner.hasNextInt() && index < 10000) {
                 numbers[index] = scanner.nextInt();
                 index++;
             } else {
                 scanner.next();
             }
+
+            while (scanner.hasNext("[\\r\\n]+")) {
+                scanner.next("[\\r\\n]+");
+            }
         }
 
-        scanner.close();
+        System.out.println("original decimal numbers:");
+        for (int i = 0; i < index; i++) {
+            System.out.println(numbers[i]);
+        }
+
+        String[] binaryNumbers = convertDecimalToBinary(numbers);
+
+        System.out.println("binary representations:");
+        for (int i = 0; i < index; i++) {
+            System.out.println(binaryNumbers[i]);
+        }
+    }
+
+
+    public static String[] convertDecimalToBinary(int[] numbers) {
+        String[] binaryNumbers = new String[numbers.length];
+
+        for(int i = 0; i < numbers.length; i++) {
+            if(numbers[i] == 0) {
+                binaryNumbers[i] = "0";
+                continue;
+            }
+            if(numbers[i] >= 32786 || numbers[i] <= -32786) {
+                binaryNumbers[i] = "1000000000000000";
+                continue;
+            }
+
+            boolean isNeg = false;
+            if (numbers[i] < 0) {
+                numbers[i] = -numbers[i];
+                isNeg = true;
+            }
+
+            //convert numbers[i] to binary
+            String binary = "";
+            while (numbers[i] > 0) {
+                int remainder = numbers[i] % 2;
+                binary = remainder + binary;
+                numbers[i] /= 2;
+            }
+
+
+            //format to 16bit length number
+            String formattedNumber = "";
+            for (int j = 0; j < 16 - binary.length(); j++) {
+                formattedNumber += "0";
+            }
+            formattedNumber += binary;
+
+            if(!isNeg) {
+                binaryNumbers[i] = formattedNumber;
+                continue;
+            }
+
+            //flip bits
+            String reversedNumber = "";
+            for (int j = 0; j < formattedNumber.length(); j++) {
+                if (formattedNumber.charAt(j) == '1') {
+                    reversedNumber += "0";
+                } else {
+                    reversedNumber += "1";
+                }
+            }
+
+            //convert it to decimal and add 1
+            int decimalValue = Integer.parseInt(reversedNumber, 2);
+            decimalValue++;
+
+            //convert it back to binary
+            String binaryPlusOne = "";
+            int numBits = 16; //number of bits needed
+            while (numBits > 0) {
+                binaryPlusOne = (decimalValue % 2) + binaryPlusOne;
+                decimalValue /= 2;
+                numBits--;
+            }
+
+            binaryNumbers[i] = binaryPlusOne;
+        }
+
+        return binaryNumbers;
     }
 }
