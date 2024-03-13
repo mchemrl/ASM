@@ -62,11 +62,6 @@ public class HighLevelDemo {
         String[] binaryNumbers = convertDecimalToBinary(numbers);
         binaryNumbers = bubbleSortAsc(binaryNumbers);
 
-        System.out.println("sorted binary numbers:");
-        for (String binaryNumber : binaryNumbers) {
-            System.out.println(binaryNumber);
-        }
-
         double median = calculateMedian(binaryNumbers);
         double average = calculateAverage(binaryNumbers);
 
