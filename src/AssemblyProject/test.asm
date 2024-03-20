@@ -2,44 +2,45 @@
 .stack 100h
 
 .data
-    array db 255 
+    buffer db 80h dup(?)
 
 .code
-main PROC
+main proc
     mov ax, @data
     mov ds, ax
 
-read_input_loop:
-    mov ah, 01h       
-    int 21h          
-    cmp al, 1Ah       
-    je end_input    
-    cmp al, 4Dh      
-    je end_input     
+    mov ah, 3Fh
+    mov bx, 0
+    lea dx, buffer
+    mov cx, 80h
+    int 21h
 
-    
-     lea si, array  
-    mov [array + si], al       
-    inc si                    
-    cmp si, 255                 
-    jnb end_input   
+    cmp ax, cx
+    jae check_eof
+    mov cx, ax
 
-end_input:
-    mov cx, si            
-    mov si, offset array  
-write_output_loop:
+display:
+    mov ah, 02h
+    mov si, 0
 
+print_loop:
+    mov dl, buffer[si]
+    int 21h
+    inc si
+    loop print_loop
+check_eof:
+    mov ah, 3Eh
+    mov bx, 0
+    int 21h
 
-    mov dl, [si]        
-    mov ah, 02h          
-    int 21h               
-    inc si                
-    loop write_output_loop
+    cmp ax, 80h
+    jne end_program
 
-    ; End program
-    mov ax, 4c00h        
-    int 21h               
+    jmp main
 
-main ENDP
+end_program:
+    mov ax, 4C00h
+    int 21h
 
-END main
+main endp
+end main
