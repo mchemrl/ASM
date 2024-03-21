@@ -4,7 +4,7 @@
 .data
     oneChar dw 00h
     buffer dw 10 dup(2)
-    counter db 0
+    counter dw 0
     arrayIndex dw 0
     power dw 0
     inputBuffer dw 0
@@ -50,7 +50,7 @@ main proc
         jmp update_array
     
     update_array:
-        mov cl, counter ;amount of digits in one number
+        mov cx, [counter] ;amount of digits in one number
         ;set to zero
         xor ax, ax
         xor dx, dx 
@@ -60,7 +60,7 @@ main proc
             sub ax, '0' ;convert to ascii
             push cx
             push dx
-            call powerOfTen
+            call convert_to_binary
             pop dx
             pop cx
             inc power
@@ -95,6 +95,26 @@ main proc
 
         endPowerOfTen:
         ret 
+
+convert_to_binary:
+    xor ax, ax
+    lea bx, [buffer]
+    mov cx, [counter]
+
+    ; loop over the characters in the string
+convert_loop:
+    ; multiply ax by 10
+    mov dx, 10
+    mul dx
+    mov al, [bx]
+    sub al, '0'
+    add ax, ax
+    inc bx
+
+    loop convert_loop
+
+    ; ax now contains the binary representation of the decimal string
+    ret
 
         ;check if the program should stop
     check:
