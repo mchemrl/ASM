@@ -3,8 +3,8 @@
 
 .data
     oneChar db 00h
-    buffer dw 1000 dup(2)
-    counter db 0
+    buffer dw 3 dup(2)
+    counter dw 0
     arrayIndex dw 0
     power dw 0
     inputBuffer dw 0
@@ -31,14 +31,14 @@ main proc
        int 21h
 
         ;check EOF
-        cmp oneChar, 0Dh
+        cmp oneChar, 0Dh ;check if the input is a new line
+        je bubble_sort
+        cmp oneChar, 20h ;check if the input is a space
         je update_array
-        cmp oneChar, 20h
-        je update_array
-        cmp oneChar, 0Ah
-        je update_array
-    ;   cmp oneChar, 'a'
-    ;   je check
+        cmp oneChar, 0Ah ;check if the input is a new line
+        je bubble_sort
+       cmp oneChar, 'a'
+       je bubble_sort
 
         mov isSpace, 0
     
@@ -54,7 +54,7 @@ main proc
     
     update_array:
 
-        mov cl, counter ;amount of digits in one number
+        mov cx, counter ;amount of digits in one number
         ;set to zero
         xor ax, ax
         xor dx, dx 
@@ -103,6 +103,23 @@ main proc
                         loop innerLoop
                         pop cx
                         loop outerLoop
+
+                find_median:
+                        mov cx, word ptr countArrayNum
+                        shr cx, 1 ; Divide countArrayNum by 2 to get the index of the middle number
+                        lea si, buffer
+                        add si, cx ;
+                        add si, cx ; Add the index to the start of the buffer to get the address of the middle number
+                        mov bx, [si] ; Load the middle number into AX
+
+                        ; Output the middle number to the console
+                        mov ah, 02h
+                        add bx, '0'  ; Convert number to ASCII character
+                        mov dl, bl   ; bl is the lower byte of bx
+                        int 21h
+                        
+
+                        jmp end_program
 
 
 
