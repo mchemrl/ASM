@@ -13,6 +13,7 @@
     printBuffer db 1000 dup(0)
     countArrayNum dw 0
     arraySum dw 0
+    newline db 0Dh, 0Ah, '$' ; Define a newline string
 
 .code
 main proc
@@ -39,8 +40,8 @@ main proc
         je update_array
         cmp oneChar, 0Ah ;check if the input is a new line
         je update_array
-       cmp oneChar, 'a'
-       je bubble_sort
+        cmp oneChar, 'a'
+        je bubble_sort
 
         mov isSpace, 0
     
@@ -114,6 +115,7 @@ main proc
                         add si, cx ; Add the index to the start of the buffer to get the address of the middle number
                         mov bx, [si] ; Load the middle number into AX
 
+                       
                         ; Output the middle number to the console
                         mov ah, 02h
                         add bx, '0'  ; Convert number to ASCII character
@@ -133,16 +135,40 @@ main proc
                             add si, 2
                             loop calculate_sum_loop
                             mov bx, arraySum ;bx contains the sum of all elements
-                     
+                            mov cx, countArrayNum ;cx contains the number of elements
                     calculate_average:
+    ; Move the sum to axcalculate_average:
     ; Move the sum to ax
     mov ax, bx
 
-    ; Clear dx to prepare for division
-    cwd
+    ; Initialize the quotient to 0
+    xor dx, dx
 
-    ; Divide the sum by the number of elements
-    
+    ; Check if cx is zero to avoid division by zero
+    cmp cx, 0
+    je end_program
+
+    ; Division loop
+    division_loop:
+        ; Subtract the divisor from the dividend
+        sub ax, cx
+
+        ; Check if the result is negative
+        js end_division
+
+        ; If not, increment the quotient and repeat
+        inc dx
+        jmp division_loop
+
+    end_division:
+        ; Add the divisor back to the dividend
+        add ax, cx
+        mov bx, dx
+                        mov ah, 02h
+                        add bx, '0'  ; Convert number to ASCII character
+                        mov dl, bl   ; bl is the lower byte of bx
+                        int 21h
+ 
     jmp end_program
 
 
