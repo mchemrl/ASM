@@ -3,14 +3,16 @@
 
 .data
     oneChar db 00h
-    buffer dw 3 dup(2)
+    buffer dw 1000 dup(2)
     counter dw 0
     arrayIndex dw 0
     power dw 0
     inputBuffer dw 0
     binaryResult dw 0
     isSpace db 0
+    printBuffer db 1000 dup(0)
     countArrayNum dw 0
+    arraySum dw 0
 
 .code
 main proc
@@ -32,11 +34,11 @@ main proc
 
         ;check EOF
         cmp oneChar, 0Dh ;check if the input is a new line
-        je bubble_sort
+        je update_array
         cmp oneChar, 20h ;check if the input is a space
         je update_array
         cmp oneChar, 0Ah ;check if the input is a new line
-        je bubble_sort
+        je update_array
        cmp oneChar, 'a'
        je bubble_sort
 
@@ -117,9 +119,35 @@ main proc
                         add bx, '0'  ; Convert number to ASCII character
                         mov dl, bl   ; bl is the lower byte of bx
                         int 21h
-                        
 
-                        jmp end_program
+                        jmp calculate_sum
+
+                       calculate_sum:
+                        xor bx, bx
+                        lea si, buffer
+                        mov cx, word ptr countArrayNum
+
+                        calculate_sum_loop:
+                            mov ax, [si]
+                            add arraySum, ax
+                            add si, 2
+                            loop calculate_sum_loop
+                            mov bx, arraySum ;bx contains the sum of all elements
+                     
+                    calculate_average:
+    ; Move the sum to ax
+    mov ax, bx
+
+    ; Clear dx to prepare for division
+    cwd
+
+    ; Divide the sum by the number of elements
+    
+    jmp end_program
+
+
+
+
 
 
 
