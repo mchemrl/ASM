@@ -9,9 +9,8 @@
     power dw 0
     inputBuffer dw 0
     binaryResult dw 0
-
     isSpace db 0
-
+    countArrayNum dw 0
 
 .code
 main proc
@@ -51,15 +50,9 @@ main proc
         or ax, ax
         jnz input
 
-        cmp counter, 0
-        je check
-
         jmp update_array
     
     update_array:
-        inc isSpace
-        cmp isSpace, 2
-        je check
 
         mov cl, counter ;amount of digits in one number
         ;set to zero
@@ -90,8 +83,28 @@ main proc
             add bx, arrayIndex 
             mov [bx], dx
             add arrayIndex, 2
-            
+            inc countArrayNum
             jmp end_input
+
+            bubble_sort:
+                        mov cx, word ptr countArrayNum
+                        dec cx  ; count-1
+                    outerLoop:
+                        push cx
+                        lea si, buffer
+                    innerLoop:
+                        mov ax, [si]
+                        cmp ax, [si+2]
+                        jl nextStep
+                        xchg [si+2], ax
+                        mov [si], ax
+                    nextStep:
+                        add si, 2
+                        loop innerLoop
+                        pop cx
+                        loop outerLoop
+
+
 
     ;function to convert a symbol to a decimal number
     convertion:
@@ -107,23 +120,10 @@ main proc
 
         endPowerOfTen:
     ; TODO convert AX from decimal to binary by repeatedly dividing by 2
-        mov bx, 2
-        mov cx, 16 ; maximum number of bits in AX
-        mov binaryResult, 0
-
-        convertLoop:
-        xor dx, dx ; clear DX
-        div bx ; divide DX:AX by BX, quotient in AX, remainder in DX
-
-        shl binaryResult, 1
-        or binaryResult, dx ; add the remainder to the binary result   
-
-        loop convertLoop
 
         ret
 
         ;check if the program should stop
-    check:
         
     end_program:
         mov ax, 4C00h   
