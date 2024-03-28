@@ -14,6 +14,7 @@
     countArrayNum dw 0
     arraySum dw 0
     newline db 0Dh, 0Ah, '$' ; Define a newline string
+    isNumber db 0
 
 .code
 main proc
@@ -21,17 +22,31 @@ main proc
     mov ds, ax
 
     input:
+
+        push bx
+        push cx
+
        mov ah, 3Fh
        mov bx, 0h  ; stdin handle
        mov cx, 1   ; 1 byte to read
        mov dx, offset oneChar   ; read to ds:dx 
        int 21h 
 
+       pop bx
+       pop cx
+
        mov inputBuffer, ax
 
+       or ax, ax
+       jnz next
+       or ax, ax
+       jz end_input
+next: 
        mov ah, 02h
        mov dl, oneChar
        int 21h
+         
+        ;check if it is a digit between 0 to 9
 
         ;check EOF
         cmp oneChar, 0Dh ;check if the input is a new line
@@ -40,14 +55,10 @@ main proc
         je update_array
         cmp oneChar, 0Ah ;check if the input is a new line
         je update_array
-        cmp oneChar, 'a'
-        je bubble_sort
-
-        mov isSpace, 0
     
-        push dx ;saving the value to the stack
-        inc counter ;counter for digits in one number
-    
+    mov isSpace, 0
+    push dx ; Saving the value to the stack
+    inc counter ;    
     end_input:
         mov ax, inputBuffer
         or ax, ax
@@ -57,25 +68,27 @@ main proc
     
     update_array:
 
+    cmp counter, 0
+      je print_newline
+
         mov cx, counter ;amount of digits in one number
         ;set to zero
         xor ax, ax
         xor dx, dx 
         
     convert_decimal:
-            pop ax
-            sub ax, '0' ;convert to ascii
+         pop ax
+         sub ax, '0' ;convert to ascii
+         push cx
+         push dx
+         call convertion
+         pop dx
+         pop cx
 
-            push cx
-            push dx
-            call convertion
-            pop dx
-            pop cx
+         add dx, ax
+         inc power
 
-            add dx, ax
-            inc power
-
-    loop convert_decimal
+        loop convert_decimal
 
     ;reset for next number
             mov counter, 0
@@ -88,6 +101,11 @@ main proc
             add arrayIndex, 2
             inc countArrayNum
             jmp end_input
+
+            print_newline:
+            mov dx, offset newline
+            mov ah, 09h
+            int 21h
 
             bubble_sort:
                         mov cx, word ptr countArrayNum
@@ -109,19 +127,21 @@ main proc
 
                 find_median:
                         mov cx, word ptr countArrayNum
-                        shr cx, 1 ; Divide countArrayNum by 2 to get the index of the middle number
+                        shr cx, 1 ; divide countArrayNum by 2 to get the index of the middle number
                         lea si, buffer
                         add si, cx ;
-                        add si, cx ; Add the index to the start of the buffer to get the address of the middle number
-                        mov bx, [si] ; Load the middle number into AX
-
-                       
+                        add si, cx ; add the index to the start of the buffer to get the address of the middle number
+                        mov bx, [si] ; load the middle number into AX
+                        
                         ; Output the middle number to the console
                         mov ah, 02h
-                        add bx, '0'  ; Convert number to ASCII character
-                        mov dl, bl   ; bl is the lower byte of bx
+                        add bx, '0'  ; convert number to ASCII character
+                        mov dl, bl   
                         int 21h
 
+                        mov dx, offset newline
+                        mov ah, 09h
+                        int 21h
                         jmp calculate_sum
 
                        calculate_sum:
@@ -136,46 +156,30 @@ main proc
                             loop calculate_sum_loop
                             mov bx, arraySum ;bx contains the sum of all elements
                             mov cx, countArrayNum ;cx contains the number of elements
-                    calculate_average:
-    ; Move the sum to axcalculate_average:
-    ; Move the sum to ax
-    mov ax, bx
+                        calculate_average:
+                            mov ax, bx
+                            xor dx, dx
+                            cmp cx, 0
+                            je end_program
+                            division_loop:
+                            sub ax, cx
+                            js end_division
+                            inc dx
+                            jmp division_loop
 
-    ; Initialize the quotient to 0
-    xor dx, dx
-
-    ; Check if cx is zero to avoid division by zero
-    cmp cx, 0
-    je end_program
-
-    ; Division loop
-    division_loop:
-        ; Subtract the divisor from the dividend
-        sub ax, cx
-
-        ; Check if the result is negative
-        js end_division
-
-        ; If not, increment the quotient and repeat
-        inc dx
-        jmp division_loop
-
-    end_division:
-        ; Add the divisor back to the dividend
-        add ax, cx
-        mov bx, dx
+                        end_division:
+                        add ax, cx
+                        mov bx, dx
                         mov ah, 02h
                         add bx, '0'  ; Convert number to ASCII character
                         mov dl, bl   ; bl is the lower byte of bx
                         int 21h
  
-    jmp end_program
+                        jmp end_program
 
 
 
-
-
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
     ;function to convert a symbol to a decimal number
     convertion:
@@ -190,12 +194,12 @@ main proc
             loop powerLoop  
 
         endPowerOfTen:
-    ; TODO convert AX from decimal to binary by repeatedly dividing by 2
 
         ret
 
-        ;check if the program should stop
-        
+end_print:
+    ret
+    
     end_program:
         mov ax, 4C00h   
         int 21h
