@@ -14,51 +14,51 @@
     countArrayNum dw 0
     arraySum dw 0
     newline db 0Dh, 0Ah, '$' ; Define a newline string
-    isNumber db 0
-
+    ;to store median and average somewhere
+    median dw 0
+    average dw 0
+    counterMedian dw 0 ; to count amount of digits in median
+    counterAverage dw 0 ; to count amount of digits in average
 .code
 main proc
     mov ax, @data
     mov ds, ax
 
     input:
-
         push bx
         push cx
 
-       mov ah, 3Fh
-       mov bx, 0h  ; stdin handle
-       mov cx, 1   ; 1 byte to read
-       mov dx, offset oneChar   ; read to ds:dx 
-       int 21h 
+        mov ah, 3Fh
+        mov bx, 0h  ; stdin handle
+        mov cx, 1   ; 1 byte to read
+        mov dx, offset oneChar   ; read to ds:dx 
+        int 21h 
 
-       pop bx
-       pop cx
-
-       mov inputBuffer, ax
-
-       or ax, ax
-       jnz next
-       or ax, ax
-       jz end_input
-next: 
-       mov ah, 02h
-       mov dl, oneChar
-       int 21h
-         
-        ;check if it is a digit between 0 to 9
-
-        ;check EOF
-        cmp oneChar, 0Dh ;check if the input is a new line
-        je update_array
-        cmp oneChar, 20h ;check if the input is a space
-        je update_array
-        cmp oneChar, 0Ah ;check if the input is a new line
-        je update_array
+        pop bx
+        pop cx
     
-    mov isSpace, 0
-    push dx ; Saving the value to the stack
-    inc counter ;    
+        mov inputBuffer, ax
+
+        or ax, ax
+        jnz next
+        or ax, ax
+        jz end_input
+    next: 
+        mov ah, 02h
+        mov dl, oneChar
+            
+            ;check for spaces and newlines
+            cmp oneChar, 0Dh ;check if the input is a new line
+            je update_array
+            cmp oneChar, 20h ;check if the input is a space
+            je update_array
+            cmp oneChar, 0Ah ;check if the input is a new line
+            je update_array
+        
+        mov isSpace, 0
+        push dx ; Saving the value to the stack
+        inc counter ;    
+    
     end_input:
         mov ax, inputBuffer
         or ax, ax
@@ -81,7 +81,7 @@ next:
          sub ax, '0' ;convert to ascii
          push cx
          push dx
-         call convertion
+         call convertionToDecimal
          pop dx
          pop cx
 
@@ -103,9 +103,6 @@ next:
             jmp end_input
 
             print_newline:
-            mov dx, offset newline
-            mov ah, 09h
-            int 21h
 
             bubble_sort:
                         mov cx, word ptr countArrayNum
@@ -127,22 +124,50 @@ next:
 
                 find_median:
                         mov cx, word ptr countArrayNum
-                        shr cx, 1 ; divide countArrayNum by 2 to get the index of the middle number
+                        shr cx, 1 ; Divide countArrayNum by 2 to get the index of the middle number
                         lea si, buffer
                         add si, cx ;
-                        add si, cx ; add the index to the start of the buffer to get the address of the middle number
-                        mov bx, [si] ; load the middle number into AX
-                        
-                        ; Output the middle number to the console
+                        add si, cx ; Add the index to the start of the buffer to get the address of the middle number
+                        mov bx, [si]   ; load the middle number to ax
+                        mov ax, bx
+                        mov median, ax
+
+                        mov bx, 10 ; We will divide by 10 to get each digit
+                        mov cx, 0 ; CX will hold the count of digits
+
+                    count_digits:
+                        xor dx, dx ; Clear DX for division
+                        div bx ; Divide AX by BX, quotient in AX, remainder in DX
+                        inc cx ; Increment the count of digits
+                        test ax, ax ; Check if there are more digits to process
+                        jnz count_digits 
+                    mov counterMedian, cx; amount of digits in meadian
+
+                        ; output the middle number to the console
+                        ; TODO get the remainder of number, print it in a loop. add some counter to cx
+                        mov ax, median
+                    convert_median_loop:
+                        mov bx, 10; 
+                        xor dx, dx     ; Clear DX before division to hold the remainder
+                        div bx           ; AX = AX / BX, DX = AX % BX
+                        push dx         ; push the remainder to the stack
+                        loop convert_median_loop
+                        ;so if the median is 123 in stack it will be like
+                        ;3
+                        ;2
+                        ;1
+                        ; then TODO printing each char from stack and add counter
+                        mov cx, counterMedian
+                    print_median_loop:
+                        pop dx 
+                        add dx, '0'
                         mov ah, 02h
-                        add bx, '0'  ; convert number to ASCII character
-                        mov dl, bl   
                         int 21h
+                        loop print_median_loop
 
                         mov dx, offset newline
                         mov ah, 09h
                         int 21h
-                        jmp calculate_sum
 
                        calculate_sum:
                         xor bx, bx
@@ -170,10 +195,8 @@ next:
                         end_division:
                         add ax, cx
                         mov bx, dx
-                        mov ah, 02h
-                        add bx, '0'  ; Convert number to ASCII character
-                        mov dl, bl   ; bl is the lower byte of bx
-                        int 21h
+                       
+            
  
                         jmp end_program
 
@@ -182,23 +205,20 @@ next:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
     ;function to convert a symbol to a decimal number
-    convertion:
+    convertionToDecimal:
         mov cx, [power] 
         mov bx, 10 
 
         cmp cx, 0 ; if the power is 0, we don't need to do anything
-        je endPowerOfTen ; jump to endPowerOfTen if cx is zero
+        je endPowerOfTenToDecimal ; jump to endPowerOfTen if cx is zero
 
-        powerLoop:
+        powerLoopToDecimal:
             mul bx ; multiply ax by 10 ?
-            loop powerLoop  
+            loop powerLoopToDecimal  
 
-        endPowerOfTen:
+        endPowerOfTenToDecimal:
 
-        ret
-
-end_print:
-    ret
+        
     
     end_program:
         mov ax, 4C00h   
