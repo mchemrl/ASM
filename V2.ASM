@@ -195,8 +195,36 @@ main proc
                         end_division:
                         add ax, cx
                         mov bx, dx
-                       
-            
+                        mov ax, bx
+                        mov average, ax 
+                        
+                        mov bx, 10 
+                        mov cx, 0 
+
+                       count_digitsAVG:
+                        xor dx, dx 
+                        div bx 
+                        inc cx 
+                        test ax, ax 
+                        jnz count_digitsAVG
+
+                        mov ax, average
+
+                    mov counterAverage, cx 
+                    convert_average_loop:
+                        mov bx, 10; 
+                        xor dx, dx     ; Clear DX before division to hold the remainder
+                        div bx           ; AX = AX / BX, DX = AX % BX
+                        push dx         ; push the remainder to the stack
+                        loop convert_average_loop
+                        mov cx, counterAverage
+                    print_average_loop:
+                        pop dx
+                        add dx, '0'
+                        mov ah, 02h
+                        int 21h
+                        loop print_average_loop
+
  
                         jmp end_program
 
@@ -218,7 +246,33 @@ main proc
 
         endPowerOfTenToDecimal:
 
-        
+        ret
+
+        convertionToString:
+            mov cx, 10 ; We will divide by 10 to get each digit
+            mov si, offset buffer + 5 ; Point SI to the end of the buffer
+
+        convert_loopToString:
+            xor dx, dx ; Clear DX for division
+            div cx ; Divide AX by CX, quotient in AX, remainder in DX
+            add dl, '0' ; Convert the remainder to an ASCII character
+            dec si ; Move to the previous character in the buffer
+            mov [si], dl ; Store the character in the buffer
+
+            test ax, ax ; Check if there are more digits to process
+            jnz convert_loopToString ; If AX is not zero, repeat the process
+            mov [si], dl ; Store the character in the buffer
+
+            test ax, ax ; Check if there are more digits to process
+            jnz convert_loopToString ; If AX is not zero, repeat the process
+
+            print_decimal:
+            mov dx, si ; Point DX to the start of the number in the buffer
+            mov ah, 09h ; Set AH to 9 for INT 21h function 9
+            int 21h ; 
+        endConvertionToString:
+            mov dx, si ; Point DX to the start of the number in the buffer
+            ret
     
     end_program:
         mov ax, 4C00h   
