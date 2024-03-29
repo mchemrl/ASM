@@ -48,15 +48,16 @@
             mov ah, 02h
             mov dl, oneChar
                 
+                cmp oneChar, '-'
+                je set_neg
                 ;check for spaces and newlines
                 cmp oneChar, 0Dh ;check if the input is a new line
-                je update_array
+                je input
                 cmp oneChar, 20h ;check if the input is a space
                 je update_array
                 cmp oneChar, 0Ah ;check if the input is a new line
-                je update_array
-                cmp oneChar, '-'
-                je set_neg
+                je input
+                
 
 
             mov isSpace, 0
