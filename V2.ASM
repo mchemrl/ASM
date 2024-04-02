@@ -8,7 +8,6 @@
         arrayIndex dw 0
         power dw 0
         inputBuffer dw 0
-        binaryResult dw 0
         isSpace db 0
         isNeg db 0
         countArrayNum dw 0
@@ -77,7 +76,7 @@
         update_array:
 
             cmp counter, 0
-            je print_newline
+            je bubble_sort
 
             mov cx, counter ;amount of digits in one number
             ;set to zero
@@ -192,11 +191,7 @@
                 div bx           ; AX = AX / BX, DX = AX % BX
                 push dx         ; push the remainder to the stack
                 loop convert_median_loop
-                            ;so if the median is 123 in stack it will be like
-                            ;1
-                            ;2
-                            ;3
-                            ; then TODO printing each char from stack and add counter
+                
                 mov cx, counterMedian
 
             print_median_loop:
