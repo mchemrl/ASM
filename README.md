@@ -1,27 +1,18 @@
-автор: Вікторія Дирда
-варіант: 2
+**Task Description
+**The program is designed to read decimal numbers from the standard input (stdin), convert them into binary representation in two's complement form, and sort them in ascending order using the bubble sort algorithm. After that, the program calculates the median and the average of these numbers and outputs them in decimal format.
 
+Instructions for Use
+Enter decimal numbers separated by spaces or new lines into the standard input (stdin).
+Press Ctrl + D (or Ctrl + Z on Windows) to end the input and start the processing.
+After processing, the program will output the median and the average of the numbers in decimal format.
+Input Format
+The numbers should be decimal and separated by spaces or new lines.
+The input may contain up to 10,000 numbers.
+Lines are separated either by the byte sequence 0x0D and 0x0A (CR LF), or by a single 0x0D or 0x0A character.
+Negative numbers begin with a "-".
+If a number is too large in absolute value for a 16-bit signed representation, it will be represented as the maximum possible value.
+Output Format
+The program will output the median and the average of the processed numbers in decimal format.
 
-Опис завдання:
-Цей репозиторій містить програму, яка призначена для читання десяткових чисел зі стандартного вводу (stdin),
-конвертує їх у бінарне представлення у доповнювальному коді та сортує їх за зростанням за допомогою алгоритму сортування бульбашкою.
-Потім програма обчислює медіану та середнє значення цих чисел і виводить їх на консоль у десятковому форматі.
-
-Інструкції з використання:
-
-1. Введіть десяткові числа через пробіл або новий рядок на стандартний ввід (stdin).
-2. Натисніть Ctrl + D (або Ctrl + Z на Windows) для завершення вводу та запуску обробки.
-3. Після обробки програма виведе медіану та середнє значення чисел на консоль.
-
-Формат введення:
-1. Числа повинні бути десятковими, розділені пробілами або новими рядками.
-2. Введення може містити до 10000 чисел.
-3. Рядки розділяються або послідовністю байтів 0x0D та 0x0A (CR LF), або одним символом - 0x0D чи 0x0A.
-4. Від'ємні числа починаються з -.
-5. Якщо число занадто велике за модулем для 16-бітного представлення зі знаком, воно буде представлене як максимально можливе за модулем.
-
-Формат виведення:
-Програма виведе медіану та середнє значення оброблених чисел у десятковому форматі.
-
-Технології:
-Програма написана на мові програмування Java (демо варіант) та Assembly та використовує стандартні бібліотеки для введення, обробки та виведення даних.
+Technologies
+The program is written in Assembly language and uses standard libraries for input, processing, and output of data.
